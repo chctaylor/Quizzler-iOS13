@@ -50,6 +50,18 @@ final class Quizzler_iOS13UITestsLaunchTests: XCTestCase {
         confirmProgressBarExists()
     }
     
+    @MainActor
+    func testConfirmProgressBarIndicatesQuestionOne() throws {
+        app.launch()
+        
+        confirmProgressBarExists()
+        // confirm progress bar shows question 1 of 12
+        // How can I make this fluid if the number of questions change
+        let currentQuestionNumber: Double = 1
+        confirmProgressBarStatus(currentQuestionNumber)
+        
+    }
+    
     func confirmScoreLabelExists() {
         let scoreLabel = app.staticTexts["Score: 0"]
         XCTAssertTrue(scoreLabel.exists)
@@ -79,4 +91,23 @@ final class Quizzler_iOS13UITestsLaunchTests: XCTestCase {
         let progressBar = app.progressIndicators["Quiz Question Progress"]
         XCTAssertTrue(progressBar.exists)
     }
+    
+    func confirmProgressBarStatus(_ currentQuestionNumber: Double) {
+        let progressBar = app.progressIndicators["Quiz Question Progress"]
+        let currentQuestionDecimal = Double(currentQuestionNumber)/12.0
+        let currentQuestionPercentage = round(currentQuestionDecimal * 100)
+        
+        if let progressPercentage = progressBar.value as? String {
+            // Remove % char and convert to Double for comparison
+            let progressNumericPercentage = Double(progressPercentage.replacingOccurrences(of: "%", with: "")) ?? 0.0
+            
+            if progressNumericPercentage == currentQuestionPercentage {
+                XCTAssert(true)
+            } else {
+                XCTFail("Issue found with progress bar status")
+            }
+        }
+    }
+    
+    
 }
