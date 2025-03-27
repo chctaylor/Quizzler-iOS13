@@ -62,6 +62,26 @@ final class Quizzler_iOS13UITestsLaunchTests: XCTestCase {
         
     }
     
+    @MainActor
+    func testTrueAndFalseButtonAdvancesToNextQuestion() throws {
+        app.launch()
+        confirmTrueButtonExists()
+        confirmFalseButtonExists()
+        confirmQuestionLabelExists()
+        
+        var currentQuestionText = getCurrentQuestionText()
+        advanceToNextQuestion("True Button")
+        var newQuestionText = getCurrentQuestionText()
+        XCTAssertNotEqual(currentQuestionText, newQuestionText)
+        
+        currentQuestionText = newQuestionText
+        advanceToNextQuestion("False Button")
+        newQuestionText = getCurrentQuestionText()
+        XCTAssertNotEqual(currentQuestionText, newQuestionText)
+        
+        
+    }
+    
     func confirmScoreLabelExists() {
         let scoreLabel = app.staticTexts["Score: 0"]
         XCTAssertTrue(scoreLabel.exists)
@@ -69,9 +89,6 @@ final class Quizzler_iOS13UITestsLaunchTests: XCTestCase {
     
     func confirmQuestionLabelExists() {
         let questionLabel = app.staticTexts["questionLabel"]
-        
-        let questionLabelText = questionLabel.label
-        print("Current Question \(questionLabelText)")
         
         XCTAssertTrue(questionLabel.exists)
     }
@@ -106,6 +123,32 @@ final class Quizzler_iOS13UITestsLaunchTests: XCTestCase {
             } else {
                 XCTFail("Issue found with progress bar status")
             }
+        }
+    }
+    
+    func getCurrentQuestionText() -> String {
+        
+        let questionLabel = app.staticTexts["questionLabel"]
+        let questionLabelText = questionLabel.label
+        print("\nCurrent Question \(questionLabelText)\n")
+        
+        return questionLabelText
+    }
+    
+    func advanceToNextQuestion(_ buttonTapped: String) {
+        
+        switch buttonTapped {
+        case "True Button":
+            print("\n The True Button was tapped!")
+            let trueButton = app.buttons["True"]
+            trueButton.tap()
+        case "False Button":
+            print("\n The False Button was tapped!")
+            let falseButton = app.buttons["False"]
+            falseButton.tap()
+        default:
+            print("\n An issue occurred with the button tapped!")
+        
         }
     }
     
